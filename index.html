@@ -808,17 +808,18 @@ footer a:hover {
         <select id="messageType">
           <option value="normal">Normal</option>
           <option value="embed">Embed</option>
-          <option value="embed_title">Embed + Title</option>
-          <option value="embed_image">Embed + Image</option>
-          <option value="embed_custom">Custom Embed</option>
           <option value="flood">Flood</option>
-          <option value="raid">RAID Mode</option>
         </select>
       </div>
       <div class="form-group">
         <label class="input-label">Amount</label>
         <input type="number" id="messageCount" value="9999" min="1" max="99999" />
       </div>
+    </div>
+
+    <div class="form-group hidden" id="embedTitleGroup" style="display:none;">
+      <label class="input-label">Embed Title (optional)</label>
+      <input type="text" id="embedTitle" placeholder="Leave empty for no title" />
     </div>
 
     <div class="form-group">
@@ -868,7 +869,7 @@ footer a:hover {
       </div>
       <div class="raid-card">
         <h4>Raid tips</h4>
-        <p>Pick a ping mode: @everyone, @here, or No Ping. Flood mode stacks invisible braille characters (U+3164) to max message size.</p>
+        <p>Pick a ping mode: @everyone, @here, or No Ping. Embed lets you set an optional title. Flood stacks invisible braille characters to max message size.</p>
       </div>
     </div>
 
@@ -876,7 +877,7 @@ footer a:hover {
       <div class="step"><span class="step-num">01</span><span class="step-text">Get the webhook URL from the Discord channel settings.</span></div>
       <div class="step"><span class="step-num">02</span><span class="step-text">Paste the URL in the corresponding field.</span></div>
       <div class="step"><span class="step-num">03</span><span class="step-text">Choose a ping mode: <code>@everyone</code>, <code>@here</code>, or <code>No Ping</code>.</span></div>
-      <div class="step"><span class="step-num">04</span><span class="step-text">Pick message type. <code>Flood</code> fills the message with invisible characters.</span></div>
+      <div class="step"><span class="step-num">04</span><span class="step-text">Pick message type: <code>Normal</code>, <code>Embed</code>, or <code>Flood</code>.</span></div>
       <div class="step"><span class="step-num">05</span><span class="step-text">Write the message. Leave empty for default branded message. Use <code>{n}</code> for message number.</span></div>
       <div class="step"><span class="step-num">06</span><span class="step-text">Configure the number of messages and speed.</span></div>
       <div class="step"><span class="step-num">07</span><span class="step-text">Click "Start Raid" and watch the webhook fill with messages.</span></div>
@@ -885,7 +886,7 @@ footer a:hover {
 
     <div class="tip-box">
       <strong>Tip</strong>
-      On first send, the webhook is automatically renamed to <code>discord.gg/luascript</code>. Flood mode uses <code>\u3164</code> blank characters to spam the channel with giant invisible blocks. Default speed 400ms avoids rate limiting.
+      On first send, the webhook is automatically renamed to <code>discord.gg/luascript</code>. Embed lets you set an optional title. Flood mode uses <code>\u3164</code> blank characters to spam giant invisible blocks. Default speed 400ms avoids rate limiting.
     </div>
   </div>
 
@@ -919,11 +920,25 @@ function getPingSuffix() {
 }
 
 // ============================================================
-// FLOOD WALL — invisible braille blank characters
+// MESSAGE TYPE — show/hide embed title field
 // ============================================================
-const FLOOD_CHAR = '\u3164'; // Hangul filler — invisible, Discord-safe
+const messageTypeSelect = document.getElementById('messageType');
+const embedTitleGroup = document.getElementById('embedTitleGroup');
+
+messageTypeSelect.addEventListener('change', () => {
+  if (messageTypeSelect.value === 'embed') {
+    embedTitleGroup.style.display = 'block';
+  } else {
+    embedTitleGroup.style.display = 'none';
+  }
+});
+
+// ============================================================
+// FLOOD WALL
+// ============================================================
+const FLOOD_CHAR = '\u3164';
 const FLOOD_LINE = FLOOD_CHAR.repeat(15);
-const FLOOD_WALL = Array(60).fill(FLOOD_LINE).join('\n'); // ~900 invisible chars
+const FLOOD_WALL = Array(60).fill(FLOOD_LINE).join('\n');
 
 // ============================================================
 // WEBHOOK RENAME
@@ -1058,8 +1073,8 @@ const testBtn = document.getElementById('testBtn');
 const webhookUrl = document.getElementById('webhookUrl');
 const messageContent = document.getElementById('messageContent');
 const messageCount = document.getElementById('messageCount');
-const messageType = document.getElementById('messageType');
 const delaySpeed = document.getElementById('delaySpeed');
+const embedTitleInput = document.getElementById('embedTitle');
 
 function updateStatus(message, type = 'info') {
   statusEl.textContent = message;
@@ -1076,35 +1091,30 @@ function buildMessage(content, index, type) {
   let formatted = content.replace(/\{n\}/g, index);
   let embedColor = 0xff1030;
 
-  // FLOOD MODE — message + giant invisible wall + ping at bottom
+  // FLOOD
   if (type === 'flood') {
     const floodBody = formatted + '\n' + FLOOD_WALL + pingSuffix;
     return { content: floodBody };
   }
 
-  let baseContent = formatted + pingSuffix;
-
-  switch(type) {
-    case 'normal':
-      return { content: baseContent };
-    case 'embed':
-      return { content: pingSuffix ? pingSuffix.trim() : null, embeds: [{ description: formatted, color: embedColor, footer: { text: 'KEVIN HUB' } }] };
-    case 'embed_title':
-      return { content: pingSuffix ? pingSuffix.trim() : null, embeds: [{ title: 'KEVIN HUB RAID', description: formatted, color: embedColor, footer: { text: 'KEVIN HUB' } }] };
-    case 'embed_image':
-      return { content: pingSuffix ? pingSuffix.trim() : null, embeds: [{ title: 'KEVIN HUB RAID', description: formatted, color: embedColor, image: { url: 'https://i.imgur.com/3qXKQcK.png' }, footer: { text: 'KEVIN HUB' } }] };
-    case 'embed_custom':
-      return { content: pingSuffix ? pingSuffix.trim() : null, embeds: [{ title: 'KEVIN HUB RAID', description: formatted, color: embedColor, footer: { text: 'KEVIN HUB' } }] };
-    case 'raid':
-      return { content: baseContent };
-    default:
-      return { content: baseContent };
+  // EMBED (with optional title)
+  if (type === 'embed') {
+    const embedTitleVal = embedTitleInput.value.trim();
+    const embed = { description: formatted, color: embedColor, footer: { text: 'KEVIN HUB' } };
+    if (embedTitleVal) embed.title = embedTitleVal;
+    return {
+      content: pingSuffix ? pingSuffix.trim() : null,
+      embeds: [embed]
+    };
   }
+
+  // NORMAL
+  return { content: formatted + pingSuffix };
 }
 
 async function sendOneMessage(url, content, index) {
   try {
-    const type = messageType.value;
+    const type = messageTypeSelect.value;
     const messageData = buildMessage(content, index, type);
     const response = await fetch(url, {
       method: 'POST',
