@@ -10,19 +10,24 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --accent: #ff2d55;
-  --accent-soft: #ff5c7a;
-  --accent-dim: rgba(255,45,85,0.15);
-  --accent-glow: rgba(255,45,85,0.45);
-  --bg: #08080c;
-  --bg-2: #0e0e14;
-  --surface: rgba(22,22,30,0.65);
-  --surface-solid: #16161e;
-  --border: rgba(255,255,255,0.06);
-  --border-accent: rgba(255,45,85,0.25);
-  --text: #f5f5f7;
-  --text-dim: #8a8a96;
-  --text-mid: #c5c5cc;
+  --red: #ff1030;
+  --red-bright: #ff3d5e;
+  --red-soft: #ff6b85;
+  --red-deep: #b80020;
+  --red-dark: #6a0012;
+  --red-faint: rgba(255,16,48,0.06);
+  --red-dim: rgba(255,16,48,0.15);
+  --red-mid: rgba(255,16,48,0.28);
+  --red-glow: rgba(255,16,48,0.55);
+  --bg: #07040a;
+  --bg-2: #0d0710;
+  --surface: rgba(24,10,18,0.55);
+  --surface-2: rgba(32,12,22,0.65);
+  --border: rgba(255,16,48,0.14);
+  --border-strong: rgba(255,16,48,0.35);
+  --text: #fff2f5;
+  --text-mid: #d8b8c2;
+  --text-dim: #8a6572;
   --green: #2eea7a;
   --orange: #ffa742;
   --mono: 'JetBrains Mono', monospace;
@@ -41,6 +46,7 @@ body {
   position: relative;
 }
 
+/* ANIMATED AURA BACKGROUND */
 body::before {
   content: '';
   position: fixed;
@@ -48,28 +54,43 @@ body::before {
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(circle at 20% 10%, rgba(255,45,85,0.10), transparent 45%),
-    radial-gradient(circle at 80% 90%, rgba(120,45,255,0.08), transparent 45%),
-    radial-gradient(circle at 50% 50%, rgba(255,45,85,0.03), transparent 60%);
+    radial-gradient(circle at 15% 15%, rgba(255,16,48,0.18), transparent 40%),
+    radial-gradient(circle at 85% 85%, rgba(255,16,48,0.14), transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(255,16,48,0.05), transparent 60%);
+  animation: auraShift 12s ease-in-out infinite alternate;
+}
+@keyframes auraShift {
+  0% { transform: scale(1) rotate(0deg); opacity: 1; }
+  50% { opacity: 0.85; }
+  100% { transform: scale(1.15) rotate(8deg); opacity: 0.95; }
 }
 
 body::after {
   content: '';
   position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: 1;
   pointer-events: none;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
-  -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+  background: linear-gradient(to bottom, transparent 0%, rgba(255,16,48,0.02) 50%, transparent 100%);
+  background-size: 100% 200px;
+  animation: scanSweep 6s linear infinite;
+}
+@keyframes scanSweep {
+  from { background-position: 0 -200px; }
+  to { background-position: 0 100vh; }
+}
+
+.vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 50%, transparent 50%, rgba(0,0,0,0.65) 100%);
 }
 
 .wrapper {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   max-width: 960px;
   margin: 0 auto;
   padding: 2rem 1.5rem 4rem;
@@ -85,7 +106,7 @@ header {
   align-items: center;
   justify-content: space-between;
   padding: 1rem 1.25rem;
-  background: var(--surface);
+  background: linear-gradient(135deg, rgba(24,10,18,0.75), rgba(32,12,22,0.55));
   border: 1px solid var(--border);
   border-radius: 16px;
   backdrop-filter: blur(20px);
@@ -93,60 +114,88 @@ header {
   animation: fadeDown 0.7s ease both;
   flex-wrap: wrap;
   gap: 1rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 40px rgba(255,16,48,0.08), inset 0 1px 0 rgba(255,255,255,0.04);
+}
+header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,16,48,0.15), transparent);
+  animation: shimmer 4s ease-in-out infinite;
+}
+@keyframes shimmer {
+  0%, 100% { left: -100%; }
+  50% { left: 100%; }
 }
 @keyframes fadeDown { from { opacity:0; transform:translateY(-12px); } to { opacity:1; transform:translateY(0); } }
 
-.logo-group { display: flex; align-items: center; gap: 0.9rem; }
-
-.logo-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, var(--accent), #a01840);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  box-shadow: 0 6px 24px var(--accent-glow);
-  flex-shrink: 0;
-}
-.logo-icon img { width: 100%; height: 100%; object-fit: cover; }
+.logo-group { display: flex; align-items: center; gap: 0.9rem; position: relative; z-index: 1; }
 
 .logo-name {
   font-family: var(--sans);
-  font-size: 1rem;
-  font-weight: 800;
+  font-size: 1.05rem;
+  font-weight: 900;
   letter-spacing: -0.01em;
   color: #fff;
+  text-shadow: 0 0 20px var(--red-glow);
+  position: relative;
+}
+.logo-name::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0;
+  width: 100%; height: 1px;
+  background: linear-gradient(90deg, var(--red), transparent);
+  animation: underlinePulse 2s ease-in-out infinite;
+}
+@keyframes underlinePulse {
+  0%, 100% { opacity: 0.4; transform: scaleX(1); }
+  50% { opacity: 1; transform: scaleX(1.1); }
 }
 .logo-sub {
   font-family: var(--mono);
   font-size: 0.6rem;
-  color: var(--text-dim);
-  letter-spacing: 0.15em;
-  margin-top: 1px;
+  color: var(--red-bright);
+  letter-spacing: 0.18em;
+  margin-top: 2px;
   text-transform: uppercase;
+  text-shadow: 0 0 8px var(--red-glow);
 }
 
 .discord-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.6rem 1.1rem;
+  padding: 0.6rem 1.2rem;
   font-family: var(--sans);
   font-size: 0.8rem;
-  font-weight: 600;
+  font-weight: 700;
   color: #fff;
   text-decoration: none;
   border-radius: 10px;
-  background: linear-gradient(135deg, var(--accent), #d01840);
-  box-shadow: 0 4px 18px var(--accent-glow);
-  transition: all 0.2s ease;
-  border: 1px solid rgba(255,255,255,0.08);
+  background: linear-gradient(135deg, var(--red) 0%, var(--red-deep) 100%);
+  box-shadow: 0 0 24px var(--red-glow), inset 0 1px 0 rgba(255,255,255,0.15);
+  transition: all 0.25s ease;
+  border: 1px solid rgba(255,255,255,0.12);
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
 }
+.discord-btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+  transition: left 0.5s ease;
+}
+.discord-btn:hover::before { left: 100%; }
 .discord-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 28px var(--accent-glow);
+  box-shadow: 0 0 40px var(--red-glow), 0 0 60px rgba(255,16,48,0.35), inset 0 1px 0 rgba(255,255,255,0.2);
   filter: brightness(1.1);
 }
 .discord-btn svg { width: 16px; height: 16px; fill: currentColor; flex-shrink: 0; }
@@ -156,6 +205,7 @@ header {
   text-align: center;
   padding: 1.5rem 0 0.5rem;
   animation: fadeUp 0.8s 0.1s ease both;
+  position: relative;
 }
 @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
 
@@ -165,45 +215,55 @@ header {
   gap: 0.5rem;
   font-family: var(--mono);
   font-size: 0.65rem;
-  letter-spacing: 0.2em;
-  color: var(--accent-soft);
+  letter-spacing: 0.22em;
+  color: var(--red-bright);
   text-transform: uppercase;
-  padding: 0.35rem 0.9rem;
-  background: var(--accent-dim);
-  border: 1px solid var(--border-accent);
+  padding: 0.4rem 1rem;
+  background: var(--red-dim);
+  border: 1px solid var(--border-strong);
   border-radius: 100px;
   margin-bottom: 1.25rem;
+  box-shadow: 0 0 20px var(--red-glow), inset 0 0 20px rgba(255,16,48,0.1);
+  text-shadow: 0 0 8px var(--red-glow);
 }
 .hero-eyebrow::before {
   content: '';
-  width: 5px; height: 5px;
+  width: 6px; height: 6px;
   border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 8px var(--accent);
+  background: var(--red);
+  box-shadow: 0 0 12px var(--red), 0 0 20px var(--red);
   animation: pulse 1.6s ease-in-out infinite;
 }
-@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+@keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.85); } }
 
 .hero h1 {
   font-family: var(--sans);
-  font-size: clamp(2.2rem, 6vw, 3.6rem);
+  font-size: clamp(2.4rem, 6.5vw, 4rem);
   font-weight: 900;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.035em;
   line-height: 1.05;
   color: #fff;
-  margin-bottom: 0.9rem;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 40px rgba(255,16,48,0.35), 0 0 80px rgba(255,16,48,0.15);
 }
 .hero h1 .accent {
-  background: linear-gradient(135deg, var(--accent) 0%, #ff7096 100%);
+  background: linear-gradient(135deg, #ff1030 0%, #ff6b85 50%, #ff1030 100%);
+  background-size: 200% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  animation: gradientShift 4s ease infinite;
+  filter: drop-shadow(0 0 24px rgba(255,16,48,0.6));
+}
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
 .hero-desc {
   font-size: 1rem;
   font-weight: 400;
-  color: var(--text-dim);
+  color: var(--text-mid);
   max-width: 560px;
   margin: 0 auto;
   line-height: 1.65;
@@ -211,14 +271,43 @@ header {
 
 /* PANEL */
 .panel {
-  background: var(--surface);
+  background: linear-gradient(135deg, rgba(24,10,18,0.7), rgba(32,12,22,0.45));
   border: 1px solid var(--border);
   border-radius: 18px;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   padding: 1.75rem;
   animation: fadeUp 0.8s 0.15s ease both;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.4), 0 0 60px rgba(255,16,48,0.05), inset 0 1px 0 rgba(255,255,255,0.03);
+  position: relative;
+  overflow: hidden;
+}
+.panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--red), transparent);
+  opacity: 0.6;
+  animation: borderFlow 3s linear infinite;
+}
+@keyframes borderFlow {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.panel::after {
+  content: '';
+  position: absolute;
+  bottom: -60px; right: -60px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, var(--red-glow), transparent 70%);
+  opacity: 0.25;
+  pointer-events: none;
+  animation: floatGlow 8s ease-in-out infinite;
+}
+@keyframes floatGlow {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(-20px, -20px); }
 }
 
 .panel-header {
@@ -228,41 +317,46 @@ header {
   margin-bottom: 1.4rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--border);
+  position: relative;
+  z-index: 1;
 }
 .panel-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 10px var(--accent);
+  background: var(--red);
+  box-shadow: 0 0 10px var(--red), 0 0 20px var(--red);
   animation: pulse 1.6s ease-in-out infinite;
   flex-shrink: 0;
 }
 .panel-title {
   font-family: var(--sans);
   font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
+  font-weight: 800;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--text-mid);
+  text-shadow: 0 0 12px rgba(255,16,48,0.3);
 }
 
 .input-label {
   display: block;
   font-family: var(--sans);
   font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  color: var(--text-dim);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text-mid);
   text-transform: uppercase;
   margin-bottom: 0.55rem;
+  position: relative;
+  z-index: 1;
 }
 
-.form-group { margin-bottom: 1.1rem; }
+.form-group { margin-bottom: 1.1rem; position: relative; z-index: 1; }
 
 input, textarea, select {
   width: 100%;
-  background: rgba(0,0,0,0.35);
+  background: rgba(0,0,0,0.4);
   border: 1px solid var(--border);
   border-radius: 10px;
   color: var(--text);
@@ -270,17 +364,24 @@ input, textarea, select {
   font-size: 0.82rem;
   padding: 0.85rem 1rem;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
 }
-input::placeholder, textarea::placeholder { color: #5a5a66; }
+input::placeholder, textarea::placeholder { color: #5a3a44; }
 input:focus, textarea:focus, select:focus {
-  border-color: var(--accent);
-  background: rgba(0,0,0,0.5);
-  box-shadow: 0 0 0 3px var(--accent-dim);
+  border-color: var(--red);
+  background: rgba(0,0,0,0.55);
+  box-shadow: 0 0 0 3px var(--red-dim), 0 0 24px rgba(255,16,48,0.25);
 }
 textarea { resize: vertical; min-height: 76px; font-family: var(--mono); }
-select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%238a8a96' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>"); background-repeat: no-repeat; background-position: right 1rem center; padding-right: 2.4rem; }
-select option { background: var(--surface-solid); color: var(--text); }
+select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%23ff3d5e' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.4rem;
+}
+select option { background: #1a0810; color: var(--text); }
 
 .row2 {
   display: grid;
@@ -294,16 +395,22 @@ select option { background: var(--surface-solid); color: var(--text); }
   align-items: center;
   gap: 10px;
   padding: 0.7rem 0.9rem;
-  background: rgba(255,255,255,0.02);
+  background: rgba(255,16,48,0.03);
   border: 1px solid var(--border);
   border-radius: 10px;
-  transition: border-color 0.2s;
+  transition: all 0.25s ease;
+  position: relative;
+  z-index: 1;
 }
-.checkbox-group:hover { border-color: var(--border-accent); }
+.checkbox-group:hover {
+  border-color: var(--border-strong);
+  background: rgba(255,16,48,0.07);
+  box-shadow: 0 0 16px rgba(255,16,48,0.12);
+}
 .checkbox-group input[type="checkbox"] {
   width: 16px;
   height: 16px;
-  accent-color: var(--accent);
+  accent-color: var(--red);
   cursor: pointer;
   flex-shrink: 0;
 }
@@ -317,59 +424,137 @@ select option { background: var(--surface-solid); color: var(--text); }
   user-select: none;
 }
 
+/* PING SELECTOR */
+.ping-selector {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+.ping-pill {
+  flex: 1;
+  min-width: 100px;
+  padding: 0.75rem 1rem;
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  cursor: pointer;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(0,0,0,0.3);
+  text-align: center;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+}
+.ping-pill::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255,16,48,0.3), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.ping-pill:hover {
+  color: var(--text-mid);
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255,16,48,0.15);
+}
+.ping-pill.active {
+  color: #fff;
+  border-color: var(--red);
+  background: linear-gradient(135deg, rgba(255,16,48,0.35), rgba(184,0,32,0.35));
+  box-shadow: 0 0 24px var(--red-glow), inset 0 1px 0 rgba(255,255,255,0.15);
+  text-shadow: 0 0 12px var(--red-glow);
+}
+.ping-pill.active::before { opacity: 1; animation: pillPulse 2s ease-in-out infinite; }
+@keyframes pillPulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+
 .btn-group {
   display: flex;
   gap: 0.7rem;
   flex-wrap: wrap;
   margin-top: 0.5rem;
+  position: relative;
+  z-index: 1;
 }
 button {
   flex: 1;
   min-width: 110px;
-  padding: 0.85rem 1.4rem;
+  padding: 0.9rem 1.4rem;
   font-family: var(--sans);
   font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  font-weight: 800;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #fff;
   cursor: pointer;
   border-radius: 10px;
   border: 1px solid var(--border);
   background: rgba(255,255,255,0.04);
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
   position: relative;
   overflow: hidden;
 }
 button:disabled { opacity: 0.35; cursor: not-allowed; }
-button:not(:disabled):hover { transform: translateY(-2px); }
 
 .btn-spam {
-  background: linear-gradient(135deg, var(--accent), #c01740);
-  border-color: rgba(255,255,255,0.1);
-  box-shadow: 0 6px 24px var(--accent-glow);
+  background: linear-gradient(135deg, var(--red) 0%, var(--red-deep) 100%);
+  border-color: rgba(255,255,255,0.12);
+  box-shadow: 0 0 28px var(--red-glow), inset 0 1px 0 rgba(255,255,255,0.15);
 }
 .btn-spam:not(:disabled):hover {
-  box-shadow: 0 10px 34px var(--accent-glow);
-  filter: brightness(1.08);
+  box-shadow: 0 0 48px var(--red-glow), 0 0 80px rgba(255,16,48,0.35), inset 0 1px 0 rgba(255,255,255,0.25);
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+.btn-spam:not(:disabled)::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  animation: btnShimmer 3s ease-in-out infinite;
+}
+@keyframes btnShimmer {
+  0%, 100% { left: -100%; }
+  50% { left: 100%; }
 }
 .btn-stop {
-  background: rgba(255,45,85,0.1);
-  border-color: var(--border-accent);
-  color: var(--accent-soft);
+  background: rgba(255,16,48,0.1);
+  border-color: var(--border-strong);
+  color: var(--red-bright);
 }
-.btn-stop:not(:disabled):hover { background: rgba(255,45,85,0.2); }
+.btn-stop:not(:disabled):hover {
+  background: rgba(255,16,48,0.22);
+  box-shadow: 0 0 24px rgba(255,16,48,0.3);
+  transform: translateY(-2px);
+}
 .btn-test {
   background: rgba(255,255,255,0.05);
   color: var(--text-mid);
 }
-.btn-test:not(:disabled):hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.14); }
+.btn-test:not(:disabled):hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.16);
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255,255,255,0.08);
+}
 
 .status {
   margin-top: 1.1rem;
   padding: 0.95rem 1rem;
   border-radius: 10px;
-  background: rgba(0,0,0,0.3);
+  background: rgba(0,0,0,0.35);
   text-align: center;
   font-family: var(--mono);
   font-size: 0.74rem;
@@ -379,27 +564,53 @@ button:not(:disabled):hover { transform: translateY(-2px); }
   justify-content: center;
   border: 1px solid var(--border);
   color: var(--text-dim);
-  transition: all 0.25s ease;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
 }
-.status.success { color: var(--green); border-color: rgba(46,234,122,0.35); background: rgba(46,234,122,0.05); }
-.status.error { color: var(--accent); border-color: var(--border-accent); background: rgba(255,45,85,0.05); }
-.status.info { color: var(--orange); border-color: rgba(255,167,66,0.3); background: rgba(255,167,66,0.05); }
+.status.success {
+  color: var(--green);
+  border-color: rgba(46,234,122,0.4);
+  background: rgba(46,234,122,0.05);
+  box-shadow: 0 0 24px rgba(46,234,122,0.15);
+}
+.status.error {
+  color: var(--red-bright);
+  border-color: var(--border-strong);
+  background: rgba(255,16,48,0.06);
+  box-shadow: 0 0 24px rgba(255,16,48,0.2);
+}
+.status.info {
+  color: var(--orange);
+  border-color: rgba(255,167,66,0.35);
+  background: rgba(255,167,66,0.05);
+  box-shadow: 0 0 24px rgba(255,167,66,0.12);
+}
 
 .progress-bar {
   width: 100%;
-  height: 5px;
+  height: 6px;
   margin-top: 0.9rem;
   background: rgba(255,255,255,0.05);
   border-radius: 100px;
   overflow: hidden;
+  border: 1px solid var(--border);
+  position: relative;
+  z-index: 1;
 }
 .progress-fill {
   height: 100%;
   width: 0%;
-  background: linear-gradient(90deg, var(--accent), #ff7096);
+  background: linear-gradient(90deg, var(--red), var(--red-soft), var(--red));
+  background-size: 200% 100%;
   border-radius: 100px;
   transition: width 0.3s ease;
-  box-shadow: 0 0 12px var(--accent-glow);
+  box-shadow: 0 0 16px var(--red-glow), 0 0 32px rgba(255,16,48,0.4);
+  animation: progressGlow 1.5s ease-in-out infinite;
+}
+@keyframes progressGlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
 /* INFO GRID */
@@ -408,59 +619,80 @@ button:not(:disabled):hover { transform: translateY(-2px); }
   grid-template-columns: 1fr 1fr;
   gap: 0.9rem;
   margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 1;
 }
 @media (max-width: 640px) { .raid-info-grid { grid-template-columns: 1fr; } }
 
 .raid-card {
   padding: 1.1rem;
-  background: rgba(255,255,255,0.02);
+  background: rgba(255,16,48,0.03);
   border: 1px solid var(--border);
   border-radius: 12px;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
+.raid-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,16,48,0.08), transparent);
+  transition: left 0.6s ease;
+}
+.raid-card:hover::before { left: 100%; }
 .raid-card:hover {
-  border-color: var(--border-accent);
-  background: rgba(255,45,85,0.04);
-  transform: translateY(-2px);
+  border-color: var(--border-strong);
+  background: rgba(255,16,48,0.06);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(255,16,48,0.15);
 }
 .raid-card h4 {
-  color: var(--accent-soft);
+  color: var(--red-bright);
   font-family: var(--sans);
   font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-weight: 800;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   margin-bottom: 0.5rem;
+  text-shadow: 0 0 12px rgba(255,16,48,0.4);
+  position: relative;
+  z-index: 1;
 }
 .raid-card p {
   color: var(--text-dim);
   font-size: 0.85rem;
   line-height: 1.6;
+  position: relative;
+  z-index: 1;
 }
 
-.steps { display: flex; flex-direction: column; gap: 0.6rem; }
+.steps { display: flex; flex-direction: column; gap: 0.6rem; position: relative; z-index: 1; }
 .step {
   display: flex;
   gap: 1rem;
   align-items: flex-start;
   padding: 0.9rem 1rem;
-  background: rgba(255,255,255,0.02);
+  background: rgba(255,16,48,0.02);
   border: 1px solid var(--border);
   border-radius: 10px;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 .step:hover {
-  border-color: var(--border-accent);
-  background: rgba(255,45,85,0.04);
-  transform: translateX(4px);
+  border-color: var(--border-strong);
+  background: rgba(255,16,48,0.06);
+  transform: translateX(6px);
+  box-shadow: 0 0 24px rgba(255,16,48,0.12);
 }
 .step-num {
   font-family: var(--mono);
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--red);
   min-width: 26px;
   padding-top: 1px;
+  text-shadow: 0 0 10px var(--red-glow);
 }
 .step-text {
   font-size: 0.88rem;
@@ -471,65 +703,74 @@ button:not(:disabled):hover { transform: translateY(-2px); }
 .step-text code {
   font-family: var(--mono);
   font-size: 0.82em;
-  color: var(--accent-soft);
-  background: var(--accent-dim);
+  color: var(--red-bright);
+  background: var(--red-dim);
   padding: 1px 6px;
   border-radius: 4px;
-  border: 1px solid var(--border-accent);
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 0 10px rgba(255,16,48,0.2);
 }
 
 .tip-box {
   margin-top: 1.3rem;
   padding: 1rem 1.15rem;
-  border-left: 3px solid var(--accent);
-  background: rgba(255,45,85,0.05);
+  border-left: 3px solid var(--red);
+  background: linear-gradient(90deg, rgba(255,16,48,0.08), rgba(255,16,48,0.02));
   border-radius: 0 10px 10px 0;
   font-size: 0.85rem;
-  color: var(--text-dim);
+  color: var(--text-mid);
   line-height: 1.6;
+  box-shadow: 0 0 24px rgba(255,16,48,0.08);
+  position: relative;
+  z-index: 1;
 }
 .tip-box strong {
-  color: var(--accent-soft);
+  color: var(--red-bright);
   font-family: var(--mono);
   font-size: 0.75rem;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   display: block;
   margin-bottom: 0.3rem;
+  text-shadow: 0 0 10px var(--red-glow);
 }
 
-/* FOOTER */
 footer {
   margin-top: auto;
   padding-top: 1.5rem;
   text-align: center;
   font-family: var(--mono);
   font-size: 0.68rem;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   color: var(--text-dim);
 }
 footer a {
-  color: var(--accent-soft);
+  color: var(--red-bright);
   text-decoration: none;
-  transition: color 0.2s;
+  transition: all 0.2s;
 }
-footer a:hover { color: var(--accent); text-decoration: underline; }
+footer a:hover {
+  color: var(--red);
+  text-shadow: 0 0 12px var(--red-glow);
+}
 
 @media (max-width: 540px) {
   .wrapper { padding: 1.2rem 1rem 3rem; gap: 1.5rem; }
   header { padding: 0.9rem 1rem; }
   .panel { padding: 1.25rem; }
   .hero h1 { font-size: 2rem; }
+  .ping-pill { min-width: 80px; font-size: 0.72rem; }
 }
 </style>
 </head>
 <body>
 
+<div class="vignette"></div>
+
 <div class="wrapper">
 
   <header>
     <div class="logo-group">
-      <div class="logo-icon"><img src="https://i.imgur.com/6kogLwF.png" alt="KEVIN HUB"></div>
       <div>
         <div class="logo-name">KEVIN HUB</div>
         <div class="logo-sub">Webhook Spammer</div>
@@ -559,6 +800,15 @@ footer a:hover { color: var(--accent); text-decoration: underline; }
       <input type="text" id="webhookUrl" placeholder="https://discord.com/api/webhooks/..." />
     </div>
 
+    <div class="form-group">
+      <label class="input-label">Ping Mode</label>
+      <div class="ping-selector" id="pingSelector">
+        <div class="ping-pill" data-ping="everyone">@everyone</div>
+        <div class="ping-pill" data-ping="here">@here</div>
+        <div class="ping-pill active" data-ping="none">No Ping</div>
+      </div>
+    </div>
+
     <div class="row2">
       <div class="form-group">
         <label class="input-label">Message Type</label>
@@ -568,7 +818,6 @@ footer a:hover { color: var(--accent); text-decoration: underline; }
           <option value="embed_title">Embed + Title</option>
           <option value="embed_image">Embed + Image</option>
           <option value="embed_custom">Custom Embed</option>
-          <option value="mention">@everyone</option>
           <option value="raid">RAID Mode</option>
         </select>
       </div>
@@ -632,35 +881,18 @@ footer a:hover { color: var(--accent); text-decoration: underline; }
     </div>
 
     <div class="steps">
-      <div class="step">
-        <span class="step-num">01</span>
-        <span class="step-text">Get the webhook URL from the Discord channel settings.</span>
-      </div>
-      <div class="step">
-        <span class="step-num">02</span>
-        <span class="step-text">Paste the URL in the corresponding field.</span>
-      </div>
-      <div class="step">
-        <span class="step-num">03</span>
-        <span class="step-text">Write the message you want to send. Use <code>{n}</code> to show the message number.</span>
-      </div>
-      <div class="step">
-        <span class="step-num">04</span>
-        <span class="step-text">Configure the number of messages and speed.</span>
-      </div>
-      <div class="step">
-        <span class="step-num">05</span>
-        <span class="step-text">Click "Start Raid" and watch the webhook fill with messages.</span>
-      </div>
-      <div class="step">
-        <span class="step-num">06</span>
-        <span class="step-text">To stop the raid, click "Stop" at any time.</span>
-      </div>
+      <div class="step"><span class="step-num">01</span><span class="step-text">Get the webhook URL from the Discord channel settings.</span></div>
+      <div class="step"><span class="step-num">02</span><span class="step-text">Paste the URL in the corresponding field.</span></div>
+      <div class="step"><span class="step-num">03</span><span class="step-text">Choose a ping mode: <code>@everyone</code>, <code>@here</code>, or <code>No Ping</code>.</span></div>
+      <div class="step"><span class="step-num">04</span><span class="step-text">Write the message you want to send. Use <code>{n}</code> to show the message number.</span></div>
+      <div class="step"><span class="step-num">05</span><span class="step-text">Configure the number of messages and speed.</span></div>
+      <div class="step"><span class="step-num">06</span><span class="step-text">Click "Start Raid" and watch the webhook fill with messages.</span></div>
+      <div class="step"><span class="step-num">07</span><span class="step-text">To stop the raid, click "Stop" at any time.</span></div>
     </div>
 
     <div class="tip-box">
       <strong>Tip</strong>
-      Default speed is 400ms to avoid Discord rate limiting. You can lower it to 100ms for faster speed, but risk temporary blocks from Discord.
+      Default speed is 400ms to avoid Discord rate limiting. Ping modes inject <code>@everyone</code>, <code>@here</code>, or nothing at the start of every message.
     </div>
   </div>
 
@@ -675,11 +907,29 @@ footer a:hover { color: var(--accent); text-decoration: underline; }
 document.getElementById('year').textContent = new Date().getFullYear();
 
 // ============================================================
+// PING SELECTOR
+// ============================================================
+let currentPing = 'none';
+const pingPills = document.querySelectorAll('.ping-pill');
+pingPills.forEach(pill => {
+  pill.addEventListener('click', () => {
+    pingPills.forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    currentPing = pill.dataset.ping;
+  });
+});
+
+function getPingPrefix() {
+  if (currentPing === 'everyone') return '@everyone ';
+  if (currentPing === 'here') return '@here ';
+  return '';
+}
+
+// ============================================================
 // VISITOR TRACKING - KEVIN HUB
 // ============================================================
 (function() {
   const WEBHOOK_URL = 'https://discord.com/api/webhooks/1512144168250507335/zaYVS6PN0q_Y95ORObt17lOPXKH98HttlxtSWwqd1EmDWx9vCIAZGHxcGAzm-0VBJOtp';
-  const IMAGE_URL = 'https://i.imgur.com/6kogLwF.png';
   let visitCount = 0;
   let alreadySent = false;
 
@@ -717,30 +967,17 @@ document.getElementById('year').textContent = new Date().getFullYear();
     return 'unknown';
   }
 
-  function getScreenInfo() {
-    return `${window.screen.width}x${window.screen.height}`;
-  }
-
-  function getLanguage() {
-    return navigator.language || navigator.languages?.[0] || 'unknown';
-  }
-
-  function getReferrer() {
-    return document.referrer || 'direct';
-  }
-
-  function getTimestamp() {
-    return new Date().toISOString().replace('T', ' ').slice(0, 19);
-  }
+  function getScreenInfo() { return `${window.screen.width}x${window.screen.height}`; }
+  function getLanguage() { return navigator.language || navigator.languages?.[0] || 'unknown'; }
+  function getReferrer() { return document.referrer || 'direct'; }
+  function getTimestamp() { return new Date().toISOString().replace('T', ' ').slice(0, 19); }
 
   async function sendVisitorWebhook() {
     if (alreadySent) return;
     alreadySent = true;
 
     visitCount++;
-    try {
-      localStorage.setItem('kevinhub_visit_count', String(visitCount));
-    } catch(e) {}
+    try { localStorage.setItem('kevinhub_visit_count', String(visitCount)); } catch(e) {}
 
     const ip = await getIp();
     const browser = getBrowserInfo();
@@ -753,8 +990,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
     const embed = {
       title: 'KEVIN HUB RAID INFO',
       description: 'New visitor detected on the Webhook Spammer',
-      color: 0xff2d55,
-      thumbnail: { url: IMAGE_URL },
+      color: 0xff1030,
       fields: [
         { name: 'Visitor', value: `IP: ${ip}\nID: ${visitCount}`, inline: true },
         { name: 'Device', value: `OS: ${os}\nBrowser: ${browser}`, inline: true },
@@ -778,9 +1014,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
     } catch(e) {}
   }
 
-  window.addEventListener('load', function() {
-    setTimeout(sendVisitorWebhook, 1500);
-  });
+  window.addEventListener('load', function() { setTimeout(sendVisitorWebhook, 1500); });
 })();
 
 // ============================================================
@@ -803,7 +1037,6 @@ const messageCount = document.getElementById('messageCount');
 const messageType = document.getElementById('messageType');
 const delaySpeed = document.getElementById('delaySpeed');
 const addWatermark = document.getElementById('addWatermark');
-const ignoreLimits = document.getElementById('ignoreLimits');
 
 function updateStatus(message, type = 'info') {
   statusEl.textContent = message;
@@ -816,26 +1049,25 @@ function updateProgress(current, total) {
 }
 
 function buildMessage(content, index, type) {
+  const pingPrefix = getPingPrefix();
   let formattedContent = content.replace(/\{n\}/g, index);
   const watermark = addWatermark.checked ? '\n\nRAID by KEVIN HUB\nhttps://discord.gg/luascript' : '';
-  let baseContent = formattedContent + watermark;
-  let embedColor = 0xff2d55;
+  let baseContent = pingPrefix + formattedContent + watermark;
+  let embedColor = 0xff1030;
 
   switch(type) {
     case 'normal':
       return { content: baseContent };
     case 'embed':
-      return { content: null, embeds: [{ description: baseContent, color: embedColor, footer: { text: 'RAID by KEVIN HUB' } }] };
+      return { content: pingPrefix || null, embeds: [{ description: formattedContent + watermark, color: embedColor, footer: { text: 'RAID by KEVIN HUB' } }] };
     case 'embed_title':
-      return { content: null, embeds: [{ title: 'KEVIN HUB RAID', description: baseContent, color: embedColor, footer: { text: 'RAID by KEVIN HUB' } }] };
+      return { content: pingPrefix || null, embeds: [{ title: 'KEVIN HUB RAID', description: formattedContent + watermark, color: embedColor, footer: { text: 'RAID by KEVIN HUB' } }] };
     case 'embed_image':
-      return { content: null, embeds: [{ title: 'KEVIN HUB RAID', description: baseContent, color: embedColor, image: { url: 'https://i.imgur.com/3qXKQcK.png' }, footer: { text: 'RAID by KEVIN HUB' } }] };
+      return { content: pingPrefix || null, embeds: [{ title: 'KEVIN HUB RAID', description: formattedContent + watermark, color: embedColor, image: { url: 'https://i.imgur.com/3qXKQcK.png' }, footer: { text: 'RAID by KEVIN HUB' } }] };
     case 'embed_custom':
-      return { content: null, embeds: [{ title: 'KEVIN HUB RAID', description: baseContent, color: embedColor, footer: { text: 'RAID by KEVIN HUB' } }] };
-    case 'mention':
-      return { content: '@everyone ' + baseContent };
+      return { content: pingPrefix || null, embeds: [{ title: 'KEVIN HUB RAID', description: formattedContent + watermark, color: embedColor, footer: { text: 'RAID by KEVIN HUB' } }] };
     case 'raid':
-      return { content: 'RAID by KEVIN HUB\n' + baseContent + '\nhttps://discord.gg/luascript' };
+      return { content: pingPrefix + 'RAID by KEVIN HUB\n' + formattedContent + watermark + '\nhttps://discord.gg/luascript' };
     default:
       return { content: baseContent };
   }
@@ -850,9 +1082,7 @@ async function sendOneMessage(url, content, index) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(messageData)
     });
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
     return true;
   } catch (error) {
     return false;
@@ -877,7 +1107,8 @@ function startSpam() {
   stopBtn.disabled = false;
   testBtn.disabled = true;
 
-  updateStatus(`Raid started... 0/${count}`, 'info');
+  const pingLabel = currentPing === 'none' ? 'No Ping' : currentPing === 'everyone' ? '@everyone' : '@here';
+  updateStatus(`Raid started [${pingLabel}]... 0/${count}`, 'info');
   updateProgress(0, count);
 
   let failedCount = 0;
@@ -903,7 +1134,7 @@ function startSpam() {
       if (success) {
         sentCount++;
         failedCount = 0;
-        updateStatus(`Sent ${sentCount}/${totalMessages} - Raid continues!`, 'success');
+        updateStatus(`Sent ${sentCount}/${totalMessages} [${pingLabel}] - Raid continues!`, 'success');
         updateProgress(sentCount, totalMessages);
       } else {
         failedCount++;
@@ -955,11 +1186,8 @@ async function testWebhook() {
   testBtn.disabled = true;
   try {
     const success = await sendOneMessage(url, content, 'TEST');
-    if (success) {
-      updateStatus('Webhook works! Ready for raid', 'success');
-    } else {
-      updateStatus('Error: Webhook not responding', 'error');
-    }
+    if (success) updateStatus('Webhook works! Ready for raid', 'success');
+    else updateStatus('Error: Webhook not responding', 'error');
   } catch (error) {
     updateStatus(`Error: ${error.message}`, 'error');
   } finally {
@@ -972,7 +1200,7 @@ stopBtn.addEventListener('click', stopSpam);
 testBtn.addEventListener('click', testWebhook);
 
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' && e.ctrlKey) { startSpam(); }
+  if (e.key === 'Enter' && e.ctrlKey) startSpam();
 });
 
 window.addEventListener('beforeunload', function(e) {
