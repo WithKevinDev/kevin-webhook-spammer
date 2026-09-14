@@ -811,6 +811,7 @@ footer a:hover {
           <option value="embed_title">Embed + Title</option>
           <option value="embed_image">Embed + Image</option>
           <option value="embed_custom">Custom Embed</option>
+          <option value="flood">Flood</option>
           <option value="raid">RAID Mode</option>
         </select>
       </div>
@@ -859,7 +860,7 @@ footer a:hover {
       </div>
       <div class="raid-card">
         <h4>Raid types</h4>
-        <p>Spam raid: repetitive messages. Protest raid: messages with specific content. Promotion raid: spreading links or ads.</p>
+        <p>Normal, Embed, Flood — Flood dumps a wall of invisible characters to visually nuke the channel with a giant message block.</p>
       </div>
       <div class="raid-card">
         <h4>Raid speed</h4>
@@ -867,7 +868,7 @@ footer a:hover {
       </div>
       <div class="raid-card">
         <h4>Raid tips</h4>
-        <p>Pick a ping mode: @everyone, @here, or No Ping. Leave the message empty to send the default KEVIN HUB branding message.</p>
+        <p>Pick a ping mode: @everyone, @here, or No Ping. Flood mode stacks invisible braille characters (U+3164) to max message size.</p>
       </div>
     </div>
 
@@ -875,15 +876,16 @@ footer a:hover {
       <div class="step"><span class="step-num">01</span><span class="step-text">Get the webhook URL from the Discord channel settings.</span></div>
       <div class="step"><span class="step-num">02</span><span class="step-text">Paste the URL in the corresponding field.</span></div>
       <div class="step"><span class="step-num">03</span><span class="step-text">Choose a ping mode: <code>@everyone</code>, <code>@here</code>, or <code>No Ping</code>.</span></div>
-      <div class="step"><span class="step-num">04</span><span class="step-text">Write the message. Leave empty for default branded message. Use <code>{n}</code> for message number.</span></div>
-      <div class="step"><span class="step-num">05</span><span class="step-text">Configure the number of messages and speed.</span></div>
-      <div class="step"><span class="step-num">06</span><span class="step-text">Click "Start Raid" and watch the webhook fill with messages.</span></div>
-      <div class="step"><span class="step-num">07</span><span class="step-text">To stop the raid, click "Stop" at any time.</span></div>
+      <div class="step"><span class="step-num">04</span><span class="step-text">Pick message type. <code>Flood</code> fills the message with invisible characters.</span></div>
+      <div class="step"><span class="step-num">05</span><span class="step-text">Write the message. Leave empty for default branded message. Use <code>{n}</code> for message number.</span></div>
+      <div class="step"><span class="step-num">06</span><span class="step-text">Configure the number of messages and speed.</span></div>
+      <div class="step"><span class="step-num">07</span><span class="step-text">Click "Start Raid" and watch the webhook fill with messages.</span></div>
+      <div class="step"><span class="step-num">08</span><span class="step-text">To stop the raid, click "Stop" at any time.</span></div>
     </div>
 
     <div class="tip-box">
       <strong>Tip</strong>
-      On first send, the webhook is automatically renamed to <code>discord.gg/luascript</code>. Empty message = default branded spam. Default speed 400ms avoids rate limiting.
+      On first send, the webhook is automatically renamed to <code>discord.gg/luascript</code>. Flood mode uses <code>\u3164</code> blank characters to spam the channel with giant invisible blocks. Default speed 400ms avoids rate limiting.
     </div>
   </div>
 
@@ -910,7 +912,6 @@ pingPills.forEach(pill => {
   });
 });
 
-// Returns ping as a LINE BELOW the content
 function getPingSuffix() {
   if (currentPing === 'everyone') return '\n@everyone';
   if (currentPing === 'here') return '\n@here';
@@ -918,7 +919,14 @@ function getPingSuffix() {
 }
 
 // ============================================================
-// WEBHOOK RENAME — discord.gg/luascript
+// FLOOD WALL — invisible braille blank characters
+// ============================================================
+const FLOOD_CHAR = '\u3164'; // Hangul filler — invisible, Discord-safe
+const FLOOD_LINE = FLOOD_CHAR.repeat(15);
+const FLOOD_WALL = Array(60).fill(FLOOD_LINE).join('\n'); // ~900 invisible chars
+
+// ============================================================
+// WEBHOOK RENAME
 // ============================================================
 const WEBHOOK_DISPLAY_NAME = 'discord.gg/luascript';
 let webhookRenamed = false;
@@ -1063,12 +1071,18 @@ function updateProgress(current, total) {
   progressFill.style.width = Math.min(percentage, 100) + '%';
 }
 
-// FINAL BUILD — ping goes BELOW the message on its own line
 function buildMessage(content, index, type) {
   const pingSuffix = getPingSuffix();
   let formatted = content.replace(/\{n\}/g, index);
-  let baseContent = formatted + pingSuffix;
   let embedColor = 0xff1030;
+
+  // FLOOD MODE — message + giant invisible wall + ping at bottom
+  if (type === 'flood') {
+    const floodBody = formatted + '\n' + FLOOD_WALL + pingSuffix;
+    return { content: floodBody };
+  }
+
+  let baseContent = formatted + pingSuffix;
 
   switch(type) {
     case 'normal':
