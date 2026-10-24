@@ -36,48 +36,6 @@
 
 html { scroll-behavior: smooth; }
 
-/* ===== SELECTION & TAP FIX ===== */
-::selection {
-  background: rgba(255, 16, 48, 0.35);
-  color: #fff;
-}
-::-moz-selection {
-  background: rgba(255, 16, 48, 0.35);
-  color: #fff;
-}
-
-* {
-  -webkit-tap-highlight-color: transparent;
-}
-
-button,
-.ping-pill,
-.discord-btn,
-label,
-.step,
-.raid-card,
-.panel-title,
-.nuke-badge,
-.count-chip,
-.step-num,
-.wh-index,
-.hook-dot,
-.logo-name,
-.logo-sub,
-.hero-eyebrow,
-.panel-dot,
-.input-label,
-.wh-status {
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-}
-
-button, .ping-pill, .discord-btn {
-  -webkit-user-drag: none;
-}
-
 body {
   background: var(--bg);
   color: var(--text);
@@ -409,6 +367,7 @@ input:focus, textarea:focus, select:focus {
   border-color: var(--red);
   background: rgba(0,0,0,0.55);
   box-shadow: 0 0 0 3px var(--red-dim), 0 0 24px rgba(255,16,48,0.25);
+  outline: none;
 }
 textarea { resize: vertical; min-height: 76px; font-family: var(--mono); }
 select {
@@ -420,6 +379,32 @@ select {
   padding-right: 2.4rem;
 }
 select option { background: #1a0810; color: var(--text); }
+
+/* ===== FIX: message type / textarea selection flash ===== */
+#messageType,
+#messageContent,
+#nukeMessage,
+#embedTitle,
+.nuke-wh-input {
+  -webkit-tap-highlight-color: transparent;
+}
+#messageType::selection,
+#messageContent::selection,
+#nukeMessage::selection,
+#embedTitle::selection,
+.nuke-wh-input::selection {
+  background: rgba(255, 16, 48, 0.35);
+  color: #fff;
+}
+#messageType::-moz-selection,
+#messageContent::-moz-selection,
+#nukeMessage::-moz-selection,
+#embedTitle::-moz-selection,
+.nuke-wh-input::-moz-selection {
+  background: rgba(255, 16, 48, 0.35);
+  color: #fff;
+}
+/* ====================================================== */
 
 .row2 {
   display: grid;
@@ -1687,7 +1672,6 @@ function startNuke() {
   nukeUpdateProgress();
   nukeUpdateDots();
 
-  // Rename all hooks
   urls.forEach(url => renameWebhook(url));
 
   let currentRound = 0;
@@ -1720,9 +1704,6 @@ function startNuke() {
 
       nukeUpdateProgress();
       nukeUpdateDots();
-
-      const totalSent = nukeSentPerHook.reduce((a, b) => a + b, 0);
-      const totalTarget = count * urls.length;
 
       if (nukeFailedPerHook.some(f => f > 10)) {
         nukeSetStatus('Too many failures on a hook — nuke stopped', 'error');
