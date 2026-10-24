@@ -893,7 +893,6 @@ footer a:hover {
   margin-bottom: 1.2rem;
   position: relative;
   z-index: 1;
-  /* Add max height and scroll for up to 100 hooks so it doesn't break the page */
   max-height: 400px;
   overflow-y: auto;
   padding-right: 5px;
@@ -1122,8 +1121,6 @@ footer a:hover {
 
       <div class="nuke-controls">
         <span class="count-chip zero" id="webhookCountChip">0 / 0 webhooks loaded</span>
-        <button type="button" id="clearNukeBtn" style="flex:0;min-width:auto;padding:0.5rem 1rem;font-size:0.7rem;background:rgba(255,255,255,0.05);color:var(--text-dim);">Clear All</button>
-        <button type="button" id="fillDemoBtn" style="flex:0;min-width:auto;padding:0.5rem 1rem;font-size:0.7rem;background:rgba(255,16,48,0.08);color:var(--red-bright);">Fill Demo URLs</button>
       </div>
 
       <!-- PING MODE for Nuke -->
@@ -1606,8 +1603,6 @@ window.addEventListener('beforeunload', function(e) {
 const MAX_HOOKS = 100;
 const webhookInputsContainer = document.getElementById('webhookInputs');
 const webhookCountChip = document.getElementById('webhookCountChip');
-const clearNukeBtn = document.getElementById('clearNukeBtn');
-const fillDemoBtn = document.getElementById('fillDemoBtn');
 const nukeMessage = document.getElementById('nukeMessage');
 const nukeCountInput = document.getElementById('nukeCount');
 const nukeDelayInput = document.getElementById('nukeDelay');
@@ -1709,7 +1704,6 @@ function updateNukeHookDots() {
   const totalRows = webhookInputsContainer.querySelectorAll('.webhook-row').length;
   const urls = getValidWebhookUrls();
   nukeHookDots.innerHTML = '';
-  // Don't render 100 dots, it will break the UI. Just render up to 20 or a summary.
   const dotsToRender = Math.min(totalRows, 20);
   for (let i = 0; i < dotsToRender; i++) {
     const dot = document.createElement('span');
@@ -1724,29 +1718,6 @@ function updateNukeHookDots() {
     more.textContent = `+${totalRows - 20}`;
     nukeHookDots.appendChild(more);
   }
-}
-
-function clearNuke() {
-  const inputs = webhookInputsContainer.querySelectorAll('.nuke-wh-input');
-  inputs.forEach(inp => {
-    inp.value = '';
-    const row = inp.closest('.webhook-row');
-    row.classList.remove('valid', 'invalid');
-    row.querySelector('.wh-status').textContent = '';
-  });
-  updateWebhookCount();
-}
-
-function fillDemo() {
-  const baseUrl = 'https://discord.com/api/webhooks/1512144168250507335/zaYVS6PN0q_Y95ORObt17lOPXKH98HttlxtSWwqd1EmDWx9vCIAZGHxcGAzm-0VBJOtp';
-  const rows = webhookInputsContainer.querySelectorAll('.webhook-row');
-  rows.forEach((row) => {
-    const input = row.querySelector('input');
-    if (!input.value.trim()) {
-      input.value = baseUrl;
-      validateWebhookRow(row, input);
-    }
-  });
 }
 
 function nukeSetStatus(msg, type = 'info') {
@@ -1898,8 +1869,6 @@ nukeAmountInput.addEventListener('input', (e) => {
   buildWebhookInputs(val);
 });
 
-clearNukeBtn.addEventListener('click', clearNuke);
-fillDemoBtn.addEventListener('click', fillDemo);
 nukeStartBtn.addEventListener('click', startNuke);
 nukeStopBtn.addEventListener('click', stopNuke);
 </script>
